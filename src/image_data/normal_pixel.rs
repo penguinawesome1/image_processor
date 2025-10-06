@@ -11,6 +11,10 @@ impl NormalPixel {
     pub fn new(b: f32, g: f32, r: f32) -> Self {
         Self { b, g, r }
     }
+
+    pub fn invert(&self) -> Self {
+        Self::new(1.0 - self.b, 1.0 - self.g, 1.0 - self.r)
+    }
 }
 
 impl ops::Mul for NormalPixel {

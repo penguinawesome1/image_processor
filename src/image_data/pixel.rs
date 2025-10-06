@@ -16,22 +16,14 @@ impl Pixel {
 
     pub fn from_normal(n: NormalPixel) -> Self {
         Pixel::new(
-            Channel((n.b / 255.0) as u8),
-            Channel((n.g / 255.0) as u8),
-            Channel((n.r / 255.0) as u8),
+            Channel::from_normal(n.b),
+            Channel::from_normal(n.g),
+            Channel::from_normal(n.r),
         )
     }
 
     pub fn to_normal(&self) -> NormalPixel {
         NormalPixel::new(self.b.to_normal(), self.g.to_normal(), self.r.to_normal())
-    }
-
-    pub fn invert(&self) -> Pixel {
-        Pixel::new(
-            Channel(255 - self.b.0),
-            Channel(255 - self.g.0),
-            Channel(255 - self.r.0),
-        )
     }
 }
 

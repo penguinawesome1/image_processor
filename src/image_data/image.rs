@@ -48,7 +48,7 @@ impl Image {
     }
 
     pub fn view_pixels(&self) -> impl Iterator<Item = (usize, usize, &Pixel)> {
-        iproduct!(0..self.height(), 0..self.width()).map(|(x, y)| (x, y, self.pixel(x, y)))
+        iproduct!(0..self.height(), 0..self.width()).map(|(y, x)| (x, y, self.pixel(x, y)))
     }
 
     pub fn for_pixel<F>(&mut self, mut f: F)
@@ -56,7 +56,7 @@ impl Image {
         F: FnMut(usize, usize, &mut Pixel),
     {
         iproduct!(0..self.height(), 0..self.width())
-            .for_each(|(x, y)| f(x, y, self.pixel_mut(x, y)));
+            .for_each(|(y, x)| f(x, y, self.pixel_mut(x, y)));
     }
 
     // credit:
@@ -73,7 +73,7 @@ impl Image {
         self.data = vec![vec![Pixel::default(); w]; h];
 
         self.for_pixel(|x, y, pixel_mut| {
-            let byte_index: usize = TGA_HEADER_LEN + (x * h + y) * 3;
+            let byte_index: usize = TGA_HEADER_LEN + (x + y * w) * 3;
 
             *pixel_mut = Pixel::new(
                 Channel(bytes[byte_index]),

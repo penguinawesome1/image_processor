@@ -46,7 +46,9 @@ image_only_channel!(only_blue, b);
 
 pub fn screen(img1: &mut Image, img2: &Image) {
     img1.for_pixel(|x, y, pixel_mut| {
-        *pixel_mut = (pixel_mut.invert() * img2.pixel(x, y).invert()).invert();
+        *pixel_mut = Pixel::from_normal(
+            (pixel_mut.to_normal().invert() * img2.pixel(x, y).to_normal().invert()).invert(),
+        );
     });
 }
 
@@ -61,12 +63,10 @@ pub fn overlay(img1: &mut Image, img2: &Image) {
     img1.for_pixel(|x, y, pixel_mut| {
         let other_norm: NormalPixel = img2.pixel(x, y).to_normal();
 
-        let norm_overlay1: NormalPixel = pixel_mut.to_normal() * other_norm * 2.0;
-        let overlay1: Pixel = Pixel::from_normal(norm_overlay1);
-
-        let norm_overlay2_inverted: NormalPixel =
-            pixel_mut.invert().to_normal() * img2.pixel(x, y).invert().to_normal() * 2.0;
-        let overlay2: Pixel = Pixel::from_normal(norm_overlay2_inverted).invert();
+        let overlay1: Pixel = Pixel::from_normal(pixel_mut.to_normal() * other_norm * 2.0);
+        let overlay2: Pixel = Pixel::from_normal(
+            (pixel_mut.to_normal().invert() * img2.pixel(x, y).to_normal().invert() * 2.0).invert(),
+        );
 
         *pixel_mut = Pixel::new(
             if other_norm.b <= 0.5 {

@@ -5,12 +5,7 @@ pub struct Channel(pub u8);
 
 impl Channel {
     pub fn from_normal(n: f32) -> Self {
-        assert!(
-            n >= 0.0 && n <= 1.0,
-            "normal values should be between 0 and 1 inclusive"
-        );
-
-        Self((n * 255.0) as u8)
+        Self((n * 255.0 + 0.5).clamp(0.0, 255.0) as u8)
     }
 
     pub fn to_normal(&self) -> f32 {
@@ -38,7 +33,7 @@ impl ops::Mul for Channel {
     type Output = Channel;
 
     fn mul(self, other: Channel) -> Channel {
-        Channel(self.0.saturating_mul(other.0))
+        Channel::from_normal(self.to_normal() * other.to_normal())
     }
 }
 
@@ -62,6 +57,6 @@ impl ops::Mul<f32> for Channel {
     type Output = Channel;
 
     fn mul(self, n: f32) -> Channel {
-        Channel((self.0 as f32 * n).clamp(0.0, 255.0) as u8)
+        Channel::from_normal(self.to_normal() * n)
     }
 }
