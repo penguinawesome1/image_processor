@@ -4,7 +4,6 @@ use std::env;
 
 fn image_processor() -> Result<(), ReadError> {
     let mut args: Vec<String> = env::args().skip(1).rev().collect();
-
     let (o_path, i_path, mut img) = read_input(&mut args)?;
 
     while let Some(arg) = args.pop() {
