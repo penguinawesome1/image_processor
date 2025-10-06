@@ -29,19 +29,19 @@ fn is_tga_path(path: &PathBuf) -> bool {
     path.extension() == Some(OsStr::new("tga"))
 }
 
-pub fn read_input(args: &[String]) -> Result<(PathBuf, PathBuf, Image), ReadError> {
+pub fn read_input(args: &mut Vec<String>) -> Result<(PathBuf, PathBuf, Image), ReadError> {
     let args_len: usize = args.len();
 
     match args_len {
-        1 => return Err(ReadError::RequestHelp),
-        2 if args[1] == "help" => return Err(ReadError::RequestHelp),
-        2 => return Err(ReadError::InvalidFileName),
-        3 => return Err(ReadError::InvalidMethodName),
+        0 => return Err(ReadError::RequestHelp),
+        1 if args[0] == "help" => return Err(ReadError::RequestHelp),
+        1 => return Err(ReadError::InvalidFileName),
+        2 => return Err(ReadError::InvalidMethodName),
         _ => (),
     };
 
-    let output_path: PathBuf = PathBuf::from(&args[1]);
-    let input_path: PathBuf = PathBuf::from(&args[2]);
+    let output_path: PathBuf = PathBuf::from(args.pop().unwrap());
+    let input_path: PathBuf = PathBuf::from(args.pop().unwrap());
 
     if !is_tga_path(&output_path) || !is_tga_path(&input_path) {
         return Err(ReadError::InvalidFileName);
@@ -52,14 +52,12 @@ pub fn read_input(args: &[String]) -> Result<(PathBuf, PathBuf, Image), ReadErro
     Ok((output_path, input_path, tracking_img))
 }
 
-pub fn next_img(args_len: usize, args: &[String], index: &mut usize) -> Result<Image, ReadError> {
-    *index += 1;
-
-    if *index >= args_len {
+pub fn next_img(args: &mut Vec<String>) -> Result<Image, ReadError> {
+    let Some(arg) = args.pop() else {
         return Err(ReadError::MissingArgument);
-    }
+    };
 
-    let path: PathBuf = PathBuf::from(&args[*index]);
+    let path: PathBuf = PathBuf::from(&arg);
 
     if !is_tga_path(&path) {
         return Err(ReadError::InvalidFileNameArg);
@@ -68,12 +66,10 @@ pub fn next_img(args_len: usize, args: &[String], index: &mut usize) -> Result<I
     Ok(Image::new(&path)?)
 }
 
-pub fn next_num(args_len: usize, args: &[String], index: &mut usize) -> Result<i32, ReadError> {
-    *index += 1;
-
-    if *index >= args_len {
+pub fn next_num(args: &mut Vec<String>) -> Result<i32, ReadError> {
+    let Some(arg) = args.pop() else {
         return Err(ReadError::MissingArgument);
-    }
+    };
 
-    args[*index].parse().map_err(|_| ReadError::MissingNumArg)
+    arg.parse().map_err(|_| ReadError::MissingNumArg)
 }

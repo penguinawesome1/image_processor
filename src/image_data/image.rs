@@ -73,7 +73,7 @@ impl Image {
         self.data = vec![vec![Pixel::default(); w]; h];
 
         self.for_pixel(|x, y, pixel_mut| {
-            let byte_index: usize = TGA_HEADER_LEN + (x + y * w) * 3;
+            let byte_index: usize = TGA_HEADER_LEN + (x * h + y) * 3;
 
             *pixel_mut = Pixel::new(
                 Channel(bytes[byte_index]),
