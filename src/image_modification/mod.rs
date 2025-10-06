@@ -5,8 +5,8 @@ use crate::image_modification::adjuster::*;
 use crate::input_reader::{ReadError, next_img, next_num};
 
 #[must_use]
-pub fn apply_method(img: &mut Image, args: &[String], index: usize) -> Result<(), ReadError> {
-    let arg: &str = &args[index];
+pub fn apply_method(img: &mut Image, args: &[String], index: &mut usize) -> Result<(), ReadError> {
+    let arg: &str = &args[*index];
     let args_len: usize = args.len();
 
     match arg {
